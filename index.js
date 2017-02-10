@@ -12,6 +12,7 @@ var rimraf = require('gulp-rimraf');
 var htmlmin = require('gulp-htmlmin');
 var resolvePath = require('gulp-resolve-path');
 var RequireJsRely = require("gulp-requirejs-rely");
+var replace = require("gulp-replace");
 
 function init(options) {
     //传入参数与默认值的合并
@@ -22,8 +23,8 @@ function init(options) {
         fileExtMap: { //文件后缀名配置
             image: ['jpg', 'png', 'jpeg', 'gif', 'webp', 'bmp', 'svg'],
             style: ['css', 'less'],
-            template: ['html'],
-            script: ['js']
+            script: ['js'],
+            template: ['html']
         },
         source: "client",
         output: "public",
@@ -182,6 +183,7 @@ function init(options) {
         var tplSrcArr = getSrcArr(fileExtMap.template);
         return gulp.src(tplSrcArr, {base: sourceBase})
             .pipe(resolvePath())
+            .pipe(replace(".less", ".css")) //替换less关系，存在风险
             .pipe(revCollector({
                 dirReplacements: dirReplacements
             }))
@@ -259,6 +261,7 @@ function init(options) {
         gulp.task(taskName, function () {
             return gulp.src(srcArr, {base: sourceBase})
                 .pipe(resolvePath())
+                .pipe(replace(".less", ".css")) //替换less关系，存在风险
                 .pipe(revCollector({
                     dirReplacements: dirReplacements
                 }))
