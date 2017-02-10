@@ -183,7 +183,9 @@ function init(options) {
         var tplSrcArr = getSrcArr(fileExtMap.template);
         return gulp.src(tplSrcArr, {base: sourceBase})
             .pipe(resolvePath())
-            .pipe(replace(".less", ".css")) //替换less关系，存在风险
+            .pipe(replace(new RegExp("(\\/" + sourceBase + "\\/\\S+\\.)less", "ig"), function ($0, $1) { //支持less的定位
+                return $1 + "css";
+            }))
             .pipe(revCollector({
                 dirReplacements: dirReplacements
             }))
@@ -261,7 +263,9 @@ function init(options) {
         gulp.task(taskName, function () {
             return gulp.src(srcArr, {base: sourceBase})
                 .pipe(resolvePath())
-                .pipe(replace(".less", ".css")) //替换less关系，存在风险
+                .pipe(replace(new RegExp("(\\/" + sourceBase + "\\/\\S+\\.)less", "ig"), function ($0, $1) { //支持less的定位
+                    return $1 + "css";
+                }))
                 .pipe(revCollector({
                     dirReplacements: dirReplacements
                 }))
