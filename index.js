@@ -13,6 +13,7 @@ var htmlmin = require('gulp-htmlmin');
 var resolvePath = require('gulp-resolve-path');
 var RequireJsRely = require("gulp-requirejs-rely");
 var replace = require("gulp-replace");
+var crypto = require('crypto');
 
 function init(options) {
     //传入参数与默认值的合并
@@ -29,7 +30,7 @@ function init(options) {
         source: "client",
         output: "public",
         tplOutput: "views",
-        cdn: "",
+        cdn: "", //也可以接收数组
         serverStaticPath: "public" //server端渲染静态文件的第一个路径
     }, options);
 
@@ -43,7 +44,7 @@ function init(options) {
     var sourceBase = options.source;
     var outputBase = options.output;
     var tplOutputBase = options.tplOutput;
-    var cdn = options.cdn;
+    var cdn = getCdnArray(options.cdn);
 
     //js文件的依赖编译
     var requireJsRely = new RequireJsRely();
@@ -233,7 +234,18 @@ function init(options) {
     //设置替换目录的对应关系
     function setDirReplacements() {
         var staticMatchPath = new RegExp("^/" + outputBase);
-        var staticReplacePath = (needCdn ? cdn : "") + "/" + serverStaticPath;
+        var staticReplacePath = "/" + serverStaticPath;
+        if (needCdn && cdn.length > 0) {
+            if (cdn.length > 1) {
+                dirReplacements["/" + sourceBase] = function (manifestValue) {
+                    var domain = cdn[md5(manifestValue).charCodeAt(0) % cdn.length];
+                    return domain + staticReplacePath + "/" + manifestValue;
+                };
+                return false;
+            } else {
+                staticReplacePath = cdn[0] + staticReplacePath;
+            }
+        }
         dirReplacements["/" + sourceBase] = ("/" + outputBase).replace(staticMatchPath, staticReplacePath);
     }
 
@@ -314,7 +326,29 @@ function init(options) {
         results.unshift(sourceBase + "/**/*.*"); //必须包含后缀名，否则目录也会被识别
         return results;
     }
+
+    //获取整理后的cdn列表
+    function getCdnArray(data) {
+        var result = [];
+        if (!(data instanceof Array)) {
+            data = [data];
+        }
+        for (var i = 0; i < data.length; i++) {
+            if (data[i]) {
+                result.push(data[i]);
+            }
+        }
+        return result;
+    }
+
+    //按位数生成md5串
+    function md5(data, len) {
+        var md5sum = crypto.createHash('md5');
+        var encoding = typeof data === 'string' ? 'utf8' : 'binary';
+        md5sum.update(data, encoding);
+        len = len || 10;
+        return md5sum.digest('hex').substring(0, len);
+    }
 }
 
 module.exports = init;
-

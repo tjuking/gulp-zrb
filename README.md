@@ -18,7 +18,7 @@
         source: "client",
         output: "public",
         tplOutput: "views",
-        cdn: "",
+        cdn: "", //同时也支持数组
         serverStaticPath: "public" //server端渲染静态文件的第一个路径
     });
     
