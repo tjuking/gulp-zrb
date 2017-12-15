@@ -20,6 +20,7 @@ function init(options) {
     options = _.extend({
         gulp: "", //必须传入gulp对象
         needOptimize: false, //默认js、CSS、image文件不需要压缩，线上需要开启压缩
+        noTplOptimize: false, //是否强制不对模板压缩（freemarker的解析有问题）
         needCdn: false, //是否需要CDN
         fileExtMap: { //文件后缀名配置
             image: ['jpg', 'png', 'jpeg', 'gif', 'webp', 'bmp', 'svg'],
@@ -39,6 +40,7 @@ function init(options) {
 
     //gulp执行可附带的参数
     var needOptimize = options.needOptimize || (argv['o'] || argv['optimize']);
+    var noTplOptimize = options.noTplOptimize || !needOptimize;
     var needCdn = options.needCdn || (argv['D'] || argv['domain']);
     var fileExtMap = options.fileExtMap;
     var sourceBase = options.source;
@@ -190,7 +192,7 @@ function init(options) {
             .pipe(revCollector({
                 dirReplacements: dirReplacements
             }))
-            .pipe(gulpIf(needOptimize, htmlmin()))
+            .pipe(gulpIf(!noTplOptimize, htmlmin()))
             .pipe(gulp.dest(tplOutputBase));
     });
 
@@ -226,6 +228,7 @@ function init(options) {
     //上线的编译（等价于gulp -o -D）
     gulp.task("online", function (cb) {
         needOptimize = true; //线上编译模式需要混淆压缩
+        noTplOptimize = options.noTplOptimize;
         needCdn = true;
         setDirReplacements();
         runSequence(["default"], cb);
