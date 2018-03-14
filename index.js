@@ -285,6 +285,9 @@ function init(options) {
                     dirReplacements: dirReplacements
                 }))
                 .pipe(gulpIf(needOptimize, uglify()))
+                .on("error", function (error) { //捕获js压缩的异常
+                    console.log(error.toString());
+                })
                 .pipe(rev())
                 .pipe(gulp.dest(outputBase))
                 .pipe(rev.manifest({
