@@ -1,6 +1,6 @@
 {
   "name": "gulp-zrb",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "gulp solutions for zrb",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "gulp-minify-css": "^1.2.3",
     "gulp-replace": "^0.5.4",
     "gulp-requirejs-rely": "^3.0.0",
-    "gulp-resolve-path": "^1.0.4",
+    "gulp-resolve-path": "^1.0.5",
     "gulp-rev": "^6.0.1",
     "gulp-rev-collector": "^1.0.2",
     "gulp-rimraf": "^0.2.0",
