@@ -5,7 +5,7 @@ var gulpIf = require('gulp-if');
 var uglify = require('gulp-uglify-es').default;
 var imagemin = require('gulp-imagemin');
 var less = require("gulp-less");
-var minifyCss = require('gulp-minify-css');
+var cleanCSS = require('gulp-clean-css');
 var rev = require('gulp-rev');
 var revCollector = require('gulp-rev-collector');
 var rimraf = require('gulp-rimraf');
@@ -154,9 +154,7 @@ function init(options) {
                 dirReplacements: dirReplacements
             }))
             .pipe(less())
-            .pipe(gulpIf(needOptimize, minifyCss({
-                processImport: false
-            })))
+            .pipe(gulpIf(needOptimize, cleanCSS()))
             .pipe(rev())
             .pipe(gulp.dest(outputBase))
             .pipe(rev.manifest({
