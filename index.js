@@ -48,9 +48,6 @@ function init(options) {
     var tplOutputBase = options.tplOutput;
     var cdn = getCdnArray(options.cdn);
 
-    //js文件的依赖编译
-    var requireJsRely = new RequireJsRely();
-
     //manifest文件的source地址
     var manifestSource = outputBase + '/**/**-manifest.json';
 
@@ -65,6 +62,7 @@ function init(options) {
 
     //脚本依赖关系分析
     gulp.task('_script', function () {
+        var requireJsRely = new RequireJsRely(); //js文件的依赖编译（每次编译时初始化）
         return gulp.src(getSrcArr(fileExtMap.script, true), {base: sourceBase})
             .pipe(requireJsRely.collect())
             .on('end', function () {
