@@ -23,3 +23,5 @@
     });
     
 ```
+
+如果要结合FIS3使用监听发布，需要将`/usr/local/lib/node_modules/fis3/node_modules/fis3-command-release/lib/watch.js`中的setTimeout扫描间隔由200毫秒调整为1000毫秒（降低监听敏感度）。
