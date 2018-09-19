@@ -13,6 +13,7 @@ var htmlmin = require('gulp-htmlmin');
 var resolvePath = require('gulp-resolve-path');
 var RequireJsRely = require("gulp-requirejs-rely");
 var replace = require("gulp-replace");
+var babel = require("gulp-babel");
 var crypto = require('crypto');
 
 function init(options) {
@@ -32,7 +33,11 @@ function init(options) {
         output: "public",
         tplOutput: "views",
         cdn: "", //也可以接收数组
-        serverStaticPath: "public" //server端渲染静态文件的第一个路径
+        serverStaticPath: "public", //server端渲染静态文件的第一个路径
+        babelRecognition: "compileES6=true", //js文件里识别需要转es6的标识
+        babelOptions: { //babel初始化传入的参数
+            presets: ["env"]
+        }
     }, options);
 
     var gulp = options.gulp;
@@ -280,6 +285,9 @@ function init(options) {
                 .pipe(revCollector({
                     dirReplacements: dirReplacements
                 }))
+                .pipe(gulpIf(function (file) {
+                    return file && file.contents && file.contents.toString("utf8").indexOf(options.babelRecognition) >= 0;
+                }, babel(options.babelOptions)))
                 .pipe(gulpIf(needOptimize, uglify()))
                 .on("error", function (error) { //捕获js压缩的异常
                     console.log(error.toString());

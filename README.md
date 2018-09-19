@@ -19,7 +19,11 @@
         output: "public",
         tplOutput: "views",
         cdn: "", //同时也支持数组
-        serverStaticPath: "public" //server端渲染静态文件的第一个路径
+        serverStaticPath: "public", //server端渲染静态文件的第一个路径
+        babelRecognition: "compileES6=true", //js文件里识别需要转es6的标识
+        babelOptions: { //babel初始化传入的参数
+            presets: ["env"]
+        }
     });
     
 ```
