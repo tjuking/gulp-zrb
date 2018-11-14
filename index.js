@@ -291,6 +291,7 @@ function init(options) {
                 .pipe(gulpIf(needOptimize, uglify()))
                 .on("error", function (error) { //捕获js压缩的异常
                     console.log(error.toString());
+                    process.exit(1); //手动退出进程
                 })
                 .pipe(rev())
                 .pipe(gulp.dest(outputBase))
