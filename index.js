@@ -34,6 +34,7 @@ function init(options) {
         tplOutput: "views",
         cdn: "", //也可以接收数组
         serverStaticPath: "public", //server端渲染静态文件的第一个路径
+        noUglifyJSRecognition: ".min.", //已经压缩过的js文件不再压缩
         babelRecognition: "compileES6=true", //js文件里识别需要转es6的标识
         babelOptions: { //babel初始化传入的参数
             presets: ["env"]
@@ -288,7 +289,9 @@ function init(options) {
                 .pipe(gulpIf(function (file) {
                     return file && file.contents && file.contents.toString("utf8").indexOf(options.babelRecognition) >= 0;
                 }, babel(options.babelOptions)))
-                .pipe(gulpIf(needOptimize, uglify()))
+                .pipe(gulpIf(function (file) {
+                    return needOptimize && (file && file.path && file.path.indexOf(options.noUglifyJSRecognition) == -1);
+                }, uglify()))
                 .on("error", function (error) { //捕获js压缩的异常
                     console.log(error.toString());
                     process.exit(1); //手动退出进程
